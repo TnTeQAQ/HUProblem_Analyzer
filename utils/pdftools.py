@@ -61,7 +61,7 @@ class PDF():
         for i in self.chapters:
             while True:
                 try:
-                    descript[i] = g.text(self.text + f'Please summarize the Requirement of the {i} in few points')
+                    descript[i] = g.text(self.chapters[i] + f'Please summarize the Requirement of the {i} in few points')
                     break
                 except:
                     print(f'查询{i}失败，正在更换API并重新查询')
