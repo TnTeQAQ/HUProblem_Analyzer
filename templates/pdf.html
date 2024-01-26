@@ -1,0 +1,43 @@
+{% extends '/index.html' %}
+
+{% block csslink %}
+<link href="{{ url_for('static', filename='/css/pdf.css') }}" type="text/css" rel="stylesheet" />
+{% endblock %}
+
+{% block content %}
+<div class="pdf-box" id="pdf_box">
+    <h2>{{ pdf['file_name'] }}</h2>
+    <div class="details" id="details">
+
+        <div class="details-box1" id="problem_name">
+            <h3>problem_name</h3>
+            <p>{{ pdf['problem_name'] }}</p>
+        </div>
+
+        <div class="details-box1" id="attachments">
+            <h3>attachments</h3>
+            {% for attachment in pdf['attachments'] %}
+                <p>{{ attachment }}</p>
+            {% else %}
+                 <p>None</p>
+            {% endfor %}
+        </div>
+
+        <div class="details-box1" id="word_frequency">
+            <h3>word_frequency</h3>
+            <p>{{ pdf['word_frequency'].items() | map('join', ': ') | join(', ') }}</p>
+        </div>
+
+        <div class="details-box2" id="descripts">
+            <h3>descripts</h3>
+            {% for chapter, descript in pdf['descripts'].items() %}
+                <strong>{{ chapter }}:</strong>
+                <p>{{ descript }}</p>
+            {% endfor %}
+        </div>
+
+    </div>
+
+
+</div>
+{% endblock %}

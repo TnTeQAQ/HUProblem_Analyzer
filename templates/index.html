@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>HUProblem_Analyzer</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='css/index.css') }}">
+    {% block csslink %} {% endblock %}
+</head>
+<body>
+    <h1>HUProblem Analyzer</h1>
+    <div class="choice-box" id="choices_box">
+        {% for name in pdf_names %}
+            <a class="choice" id="choice" href="/{{ name }}">{{ name }}</a>
+        {% endfor %}
+    </div>
+
+    {% block content %} {% endblock %}
+</body>
+</html>

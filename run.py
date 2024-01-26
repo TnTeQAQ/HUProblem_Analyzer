@@ -1,15 +1,36 @@
 import os
-from utils.pdftools import PDF
+from flask import Flask, render_template, jsonify, request
+from utils.pdftools import pdf_scan
 
-pdf_path = 'pdf/'
+app = Flask(__name__, static_folder=os.getcwd()+'/static')
 
-result = os.listdir(pdf_path)
+pdf_names = []
+pdfs = {}
 
-all_pdf = []
+@app.before_first_request
+def setup():
+    try:
+        global pdf_names, pdfs
+        pdf_names, pdfs = pdf_scan()
+        # pdfs = ['123', '456']
+        print('初始化成功')
+    except:
+        print('初始化出错')
 
-for file in result:
-    print(pdf_path+file)
-    all_pdf.append(PDF(pdf_path+file))
+@app.route('/', methods=['GET', 'POST'])
+@app.route('/<pdf_name>', methods=['GET', 'POST'])
+def index(pdf_name=''):
+    print(pdf_name)
+    if pdf_name != '':
+        try:
+            global pdfs
+            pdf = pdfs[pdf_name]
+        except:
+            return '路径出错'
+        return render_template('pdf.html', pdf_names=pdf_names, pdf=pdf)
+    return render_template('index.html', pdf_names=pdf_names)
 
-print(123)
-print(123)
+if __name__ == '__main__':
+    app.run(port='5000', host='127.0.0.1', debug=True)
+
+
