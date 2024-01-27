@@ -3,12 +3,15 @@ import re
 from collections import Counter
 from utils.filterwords import filter_words
 from utils.ai.Gemini import Gemini
+from utils.ai.Gpt4turbo import Gpt4Turbo
 # from filterwords import filter_words
 # from ai.Gemini import Gemini
 import pandas as pd
 import os
 
-g = Gemini()
+gemini = Gemini()
+gpt4turbo = Gpt4Turbo()
+
 
 class PDF():
     def __init__(self, file_path, file_name):
@@ -20,7 +23,7 @@ class PDF():
         self.problem_name = self.get_problem_name()
         self.descripts = self.get_descripts()
         self.word_frequency = self.get_word_frequency(20)
-        self.attachment = self.get_attachment()
+        self.attachments = self.get_attachments()
 
     def get_text(self):
         full_text = ''
@@ -59,35 +62,45 @@ class PDF():
         descripts = {}
         while True:
             try:
-                descripts['full_text'] = g.text(self.text + 'Please summarize the content of the article in one sentence')
+                descripts['full_text'] = gemini.text(self.text + 'Please summarize the content of the article in one sentence')
                 print(f'{self.file_name}的full_text查询成功')
                 err_n = 0
                 break
             except:
                 err_n += 1
                 if err_n == 3:
-                    descripts['full_text'] = 'error!'
+                    print(f'查询full_text失败，更换ai查询')
                     err_n = 0
-                    print(f'查询full_text失败')
+                    try:
+                        descripts['full_text'] = gpt4turbo.text(self.text + 'Please summarize the content of the article in one sentence') + ' (gpt4tubo)'
+                        print(f'{self.file_name}的full_text查询成功')
+                    except:
+                        descripts['full_text'] = 'error!'
+                        print(f'查询full_text失败!')
                     break
                 print('查询full_text失败，正在更换API并重新查询')
-                g.change_api()
+                gemini.change_api()
         for i in self.chapters:
             while True:
                 try:
-                    descripts[i] = g.text(self.chapters[i] + f'Please summarize the content of the article in few points')
+                    descripts[i] = gemini.text(self.chapters[i] + f'Please summarize the content of the article in few points')
                     print(f'{self.file_name}的{i}查询成功')
                     err_n = 0
                     break
                 except:
                     err_n += 1
                     if err_n == 3:
-                        descripts[i] = 'error!'
+                        print(f'查询{i}失败，更换ai查询')
                         err_n = 0
-                        print(f'查询{i}失败!')
+                        try:
+                            descripts[i] = gpt4turbo.text(self.chapters[i] + f'Please summarize the content of the article in few points') + ' (gpt4tubo)'
+                            print(f'{self.file_name}的{i}查询成功')
+                        except:
+                            descripts[i] = 'error!'
+                            print(f'查询{i}失败!')
                         break
                     print(f'查询{i}失败，正在更换API并重新查询')
-                    g.change_api()
+                    gemini.change_api()
         return descripts
 
     def export(self):
@@ -98,7 +111,7 @@ class PDF():
         df['word_frequency'] = ' '.join([k for k in self.word_frequency])
         df.T.to_excel(f'results/{self.file_name}.xlsx', index=True)
 
-    def get_attachment(self):
+    def get_attachments(self):
         return [i for i in os.listdir(self.file_path) if '.pdf' not in i and '.' in i]
 
 def pdf_scan(pdf_path='pdf'):
@@ -111,7 +124,7 @@ def pdf_scan(pdf_path='pdf'):
                 t = PDF(file_path, file_name)
                 pdf_names.append(file_name)
                 pdfs[file_name] = t
-                t.export()
+                # t.export()
     return pdf_names, pdfs
 
 

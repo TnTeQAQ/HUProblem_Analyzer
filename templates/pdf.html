@@ -16,11 +16,13 @@
 
         <div class="details-box1" id="attachments">
             <h3>attachments</h3>
-            {% for attachment in pdf['attachments'] %}
-                <p>{{ attachment }}</p>
+            {% if pdf['attachments'] %}
+                {% for attachment in pdf['attachments'] %}
+                    <p>{{ attachment }}</p>
+                {% endfor %}
             {% else %}
-                 <p>None</p>
-            {% endfor %}
+                <p>None</p>
+            {% endif %}
         </div>
 
         <div class="details-box1" id="word_frequency">

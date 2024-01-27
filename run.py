@@ -12,7 +12,6 @@ def setup():
     try:
         global pdf_names, pdfs
         pdf_names, pdfs = pdf_scan()
-        # pdfs = ['123', '456']
         print('初始化成功')
     except:
         print('初始化出错')
