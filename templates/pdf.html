@@ -30,6 +30,13 @@
             <p>{{ pdf['word_frequency'].items() | map('join', ': ') | join(', ') }}</p>
         </div>
 
+        <div class="details-box1" id="promblem_heat">
+            <h3>promblem_heat</h3>
+            {% for engine, heat in pdf['promblem_heat'].items() %}
+                <p>{{ engine }}: {{ heat }}</p>
+            {% endfor %}
+        </div>
+
         <div class="details-box2" id="descripts">
             <h3>descripts</h3>
             {% for chapter, descript in pdf['descripts'].items() %}
@@ -37,6 +44,19 @@
                 <p>{{ descript }}</p>
             {% endfor %}
         </div>
+
+        <div class="details-box2" id="first_page_results">
+            <h3>first_page_results</h3>
+            {% for engine, results in pdf['first_page_results'].items() %}
+                <strong>{{ engine }}:</strong>
+                <p>
+                    {% for title, url in results.items() %}
+                        <a href="{{ url }}" target="_blank">{{ title }}</a><br />
+                    {% endfor %}
+                </p>
+            {% endfor %}
+        </div>
+
 
     </div>
 

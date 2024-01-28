@@ -2,6 +2,7 @@ import fitz
 import re
 from collections import Counter
 from utils.filterwords import filter_words
+from utils.heatfinder import get_heat
 from utils.ai.Gemini import Gemini
 from utils.ai.Gpt4turbo import Gpt4Turbo
 # from filterwords import filter_words
@@ -24,6 +25,7 @@ class PDF():
         self.descripts = self.get_descripts()
         self.word_frequency = self.get_word_frequency(20)
         self.attachments = self.get_attachments()
+        self.promblem_heat, self.first_page_results = get_heat(self.problem_name)
 
     def get_text(self):
         full_text = ''
@@ -63,7 +65,7 @@ class PDF():
         while True:
             try:
                 descripts['full_text'] = gemini.text(self.text + 'Please summarize the content of the article in one sentence')
-                print(f'{self.file_name}的full_text查询成功')
+                print(f'full_text查询成功')
                 err_n = 0
                 break
             except:
@@ -84,7 +86,7 @@ class PDF():
             while True:
                 try:
                     descripts[i] = gemini.text(self.chapters[i] + f'Please summarize the content of the article in few points')
-                    print(f'{self.file_name}的{i}查询成功')
+                    print(f'{i}查询成功')
                     err_n = 0
                     break
                 except:
@@ -94,7 +96,7 @@ class PDF():
                         err_n = 0
                         try:
                             descripts[i] = gpt4turbo.text(self.chapters[i] + f'Please summarize the content of the article in few points') + ' (gpt4tubo)'
-                            print(f'{self.file_name}的{i}查询成功')
+                            print(f'{i}查询成功')
                         except:
                             descripts[i] = 'error!'
                             print(f'查询{i}失败!')
@@ -121,6 +123,7 @@ def pdf_scan(pdf_path='pdf'):
         print(file_path)
         for file_name in k:
             if '.pdf' in file_name:
+                print(file_name)
                 t = PDF(file_path, file_name)
                 pdf_names.append(file_name)
                 pdfs[file_name] = t

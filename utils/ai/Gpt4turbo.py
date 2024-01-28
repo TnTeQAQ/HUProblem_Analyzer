@@ -41,7 +41,7 @@ class Gpt4Turbo():
     # 初始化模型
     def __init__(self):
         try:
-            requests.post(url=url, headers=headers)
+            requests.post(url=url, headers=headers, json=history_factory('hello')).raise_for_status()
             print("Gpt4-turbo Connect Successfully!")
         except:
             print("Can't connect to Gpt4-turbo!!!")
@@ -49,6 +49,7 @@ class Gpt4Turbo():
     def text(self, question):
         history_processed = history_factory(question)
         response = requests.post(url=url, headers=headers, json=history_processed)
+        response.raise_for_status()
         result = response.text
         return result
 

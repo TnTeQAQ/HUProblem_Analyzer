@@ -19,7 +19,7 @@ def setup():
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/<pdf_name>', methods=['GET', 'POST'])
 def index(pdf_name=''):
-    print(pdf_name)
+    # print(pdf_name)
     if pdf_name != '':
         try:
             global pdfs
